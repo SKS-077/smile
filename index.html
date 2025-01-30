@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empire Building Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .resources {
+            margin: 20px;
+        }
+
+        .resource {
+            display: inline-block;
+            padding: 10px;
+            margin: 10px;
+            background-color: #ddd;
+            border-radius: 5px;
+        }
+
+        .resource span {
+            display: block;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .buttons {
+            margin: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .btn:disabled {
+            background-color: #aaa;
+        }
+
+        .upgrade {
+            background-color: #FF9800;
+        }
+
+        .status {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        #game-over {
+            font-size: 36px;
+            color: red;
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Empire Building Game</h1>
+
+    <div class="resources">
+        <div class="resource" id="gold">
+            <span>Gold: 0</span>
+        </div>
+        <div class="resource" id="soldiers">
+            <span>Soldiers: 0</span>
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button class="btn" id="collectGold" onclick="collectGold()">Collect Gold</button>
+        <button class="btn" id="trainSoldiers" onclick="trainSoldiers()">Train Soldiers</button>
+        <button class="btn upgrade" id="upgradeEmpire" onclick="upgradeEmpire()">Upgrade Empire</button>
+    </div>
+
+    <div class="status" id="empireStatus">
+        <p>Empire Level: 1</p>
+        <p>Next Upgrade Cost: 100 Gold, 10 Soldiers</p>
+    </div>
+
+    <div id="game-over">GAME OVER! Your empire has fallen.</div>
+</div>
+
+<script>
+    // Initial resources and game state
+    let gold = 0;
+    let soldiers = 0;
+    let empireLevel = 1;
+    let upgradeCostGold = 100;
+    let upgradeCostSoldiers = 10;
+
+    // Update the displayed resources
+    function updateResources() {
+        document.getElementById("gold").innerHTML = `<span>Gold: ${gold}</span>`;
+        document.getElementById("soldiers").innerHTML = `<span>Soldiers: ${soldiers}</span>`;
+    }
+
+    // Collect Gold (Random amount between 10-50)
+    function collectGold() {
+        const collected = Math.floor(Math.random() * 41) + 10;
+        gold += collected;
+        updateResources();
+    }
+
+    // Train Soldiers (Requires Gold and will train 1 soldier per click)
+    function trainSoldiers() {
+        if (gold >= 10) {
+            gold -= 10;
+            soldiers += 1;
+            updateResources();
+        } else {
+            alert("Not enough gold to train soldiers!");
+        }
+    }
+
+    // Upgrade Empire (Costs Gold and Soldiers)
+    function upgradeEmpire() {
+        if (gold >= upgradeCostGold && soldiers >= upgradeCostSoldiers) {
+            gold -= upgradeCostGold;
+            soldiers -= upgradeCostSoldiers;
+            empireLevel += 1;
+
+            // Increase upgrade costs for the next level
+            upgradeCostGold = Math.floor(upgradeCostGold * 1.5);
+            upgradeCostSoldiers = Math.floor(upgradeCostSoldiers * 1.2);
+
+            updateResources();
+            document.getElementById("empireStatus").innerHTML = `
+                <p>Empire Level: ${empireLevel}</p>
+                <p>Next Upgrade Cost: ${upgradeCostGold} Gold, ${upgradeCostSoldiers} Soldiers</p>
+            `;
+        } else {
+            alert("Not enough resources to upgrade your empire!");
+        }
+
+        // Check for game over condition
+        if (empireLevel >= 5) {
+            document.getElementById("game-over").style.display = "block";
+        }
+    }
+
+    // Update the game state every time resources change
+    function gameLoop() {
+        if (empireLevel <= 0) {
+            document.getElementById("game-over").style.display = "block";
+        }
+    }
+
+    // Start the game loop
+    setInterval(gameLoop, 1000);
+</script>
+
+</body>
+</html>
